@@ -1,0 +1,11 @@
+# copilot auth
+github-copilot/
+
+lazy-lock.json
+lazyvim.json
+
+wezterm/config/secrets.lua
+
+fish/functions/
+
+configstore/
