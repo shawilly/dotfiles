@@ -9,3 +9,5 @@ wezterm/config/secrets.lua
 fish/functions/
 
 configstore/
+
+.DS_Store

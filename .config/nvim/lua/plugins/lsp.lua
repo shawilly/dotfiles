@@ -5,22 +5,24 @@ return {
     opts = function(_, opts)
       opts.ensure_installed = opts.ensure_installed
         or {
-          "luacheck",
-          "shellcheck",
-          "tailwindcss-language-server",
-          "typescript-language-server",
+          "bash-language-server",
+          "black",
           "css-lsp",
-          "ruff",
-          "stylua",
-          "pyright",
-          "selene",
+          "isort",
+          "luacheck",
           "prettier",
           "prettierd",
-          "black",
-          "isort",
-          "bash-language-server",
-          "shfmt",
           "prisma-language-server",
+          "pyright",
+          "ruff",
+          "selene",
+          "shellcheck",
+          "shfmt",
+          "stylua",
+          "stylelint",
+          "stylelint-lsp",
+          "tailwindcss-language-server",
+          "typescript-language-server",
         }
       table.insert(opts.ensure_installed, "js-debug-adapter")
     end,
@@ -34,7 +36,9 @@ return {
       servers = {
         prismals = {},
         bashls = {},
-        cssls = {},
+        cssls = { validate = true, lint = {
+          unknownAtRules = "ignore",
+        } },
         html = {},
         lua_ls = {
           -- enabled = false,

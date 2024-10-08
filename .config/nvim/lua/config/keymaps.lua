@@ -51,7 +51,7 @@ keymap.set(
 )
 keymap.set("n", "<right>", '<cmd>echo "javascript"<CR>')
 keymap.set("n", "<up>", '<cmd>echo "ya old dog"<CR>')
-keymap.set("n", "<down>", '<cmd>echo "do it for them <8"<CR>')
+keymap.set("n", "<down>", '<cmd>echo "do it for them <3"<CR>')
 
 -- LSP
 vim.keymap.set("n", "<leader>lr", ":LspRestart")
