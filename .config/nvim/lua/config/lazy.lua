@@ -17,7 +17,7 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
   spec = {
     { "LazyVim/LazyVim", import = "lazyvim.plugins", opts = {
-      colorscheme = "ponokai",
+      colorscheme = "ponokai-pro",
     } },
     { import = "plugins" },
     opts = {
@@ -60,10 +60,9 @@ require("lazy").setup({
     -- have outdated releases, which may break your Neovim install.
     version = "*", -- try installing the latest stable version for plugins that support semver
   },
-  install = { colorscheme = { "tokyonight", "habamax" } },
   checker = {
     enabled = true, -- check for plugin updates periodically
-    notify = false, -- notify on update
+    notify = true, -- notify on update
   }, -- automatically check for plugin updates
   performance = {
     rtp = {
