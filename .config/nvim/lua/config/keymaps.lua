@@ -44,14 +44,13 @@ keymap.set("n", "<C-S-l>", "<C-w>>")
 keymap.set("n", "<C-S-k>", "<C-w>+")
 keymap.set("n", "<C-S-j>", "<C-w>-")
 
-keymap.set(
-  "n",
-  "<left>",
-  "<cmd>echo \"We don't do this because it's easy. We do this because we thought it would be easy.\"<CR>"
-)
-keymap.set("n", "<right>", '<cmd>echo "javascript"<CR>')
-keymap.set("n", "<up>", '<cmd>echo "ya old dog"<CR>')
-keymap.set("n", "<down>", '<cmd>echo "do it for them <3"<CR>')
+keymap.set("n", "<left>", '<cmd>echo "Press H"<CR>')
+keymap.set("n", "<right>", '<cmd>echo "Press L"<CR>')
+keymap.set("n", "<up>", '<cmd>echo "Press K"<CR>')
+keymap.set("n", "<down>", '<cmd>echo "Press J"<CR>')
 
 -- LSP
-vim.keymap.set("n", "<leader>lr", ":LspRestart")
+vim.keymap.set("n", "<leader>lr", ":LspRestart<Return>")
+
+-- nvim-notify
+vim.keymap.set("n", "<leader>uH", ":Notifications<Return>")

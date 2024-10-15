@@ -1,107 +1,133 @@
-local basic_intro = {
-  "██╗    ██╗██╗██╗     ██╗     ██╗   ██╗██╗   ██╗██╗███╗   ███╗",
-  "██║    ██║██║██║     ██║     ╚██╗ ██╔╝██║   ██║██║████╗ ████║",
-  "██║ █╗ ██║██║██║     ██║      ╚████╔╝ ██║   ██║██║██╔████╔██║",
-  "██║███╗██║██║██║     ██║       ╚██╔╝  ╚██╗ ██╔╝██║██║╚██╔╝██║",
-  "╚███╔███╔╝██║███████╗███████╗   ██║    ╚████╔╝ ██║██║ ╚═╝ ██║",
-  " ╚══╝╚══╝ ╚═╝╚══════╝╚══════╝   ╚═╝     ╚═══╝  ╚═╝╚═╝     ╚═╝",
-  "                       w i l l y v i m                       ",
-}
-
-local highlight_colors = {
-  "#48cae4",
-  "#00b4d8",
-  "#0096c7",
-  "#0077b6",
-  "#ffd500",
-  "#fdc500",
-  "#eae2b7",
-}
-
-local highlight_groups = {
-  "NeovimDashboardLogo1",
-  "NeovimDashboardLogo2",
-  "NeovimDashboardLogo3",
-  "NeovimDashboardLogo4",
-  "NeovimDashboardLogo5",
-  "NeovimDashboardLogo6",
-  "NeovimDashboardLogo7",
-}
-
-local get_gradient_header = function()
-  for i, hl_group in ipairs(highlight_groups) do
-    vim.api.nvim_set_hl(0, hl_group, { fg = highlight_colors[i] })
+local function getEen(str, start_pos)
+  local byte = string.byte(str, start_pos)
+  if not byte then
+    return nil
   end
-
-  local gradient_header = {}
-  for i, line in ipairs(basic_intro) do
-    table.insert(gradient_header, {
-      type = "text",
-      val = line,
-      opts = { hl = highlight_groups[i], shrink_margin = false, position = "center" },
-    })
-  end
-
-  local output = {
-    type = "group",
-    val = gradient_header,
-    opts = { position = "center" },
-  }
-
-  return output
+  return (byte < 0x80 and 1) or (byte < 0xE0 and 2) or (byte < 0xF0 and 3) or (byte < 0xF8 and 4) or 1
 end
 
-local function configure()
-  local d_ok, dashboard = pcall(require, "alpha.themes.dashboard")
-  if not d_ok then
-    print("Failed to load alpha.themes.dashboard")
-    return
+local function colorize(header, header_color_map, colors)
+  for letter, color in pairs(colors) do
+    ---@type string
+    local color_name = "AlphaJemuelKwelKwelWalangTatay" .. letter
+    vim.api.nvim_set_hl(0, color_name, color)
+    ---@type string
+    colors[letter] = color_name
   end
 
-  local ok, theta = pcall(require, "alpha.themes.theta")
-  if not ok then
-    print("Failed to load alpha.themes.theta")
-    return
+  local colorized = {}
+
+  for i, line in ipairs(header_color_map) do
+    local colorized_line = {}
+    local pos = 0
+
+    for j = 1, #line do
+      local start = pos
+      pos = pos + getEen(header[i], start + 1)
+
+      ---@type string
+      local color_name = colors[line:sub(j, j)]
+      if color_name then
+        table.insert(colorized_line, { color_name, start, pos })
+      end
+    end
+
+    table.insert(colorized, colorized_line)
   end
 
-  theta.config.layout[2] = get_gradient_header()
-
-  theta.config.layout[6] = {
-    type = "group",
-    val = {
-      { type = "text", val = "Quick links", opts = { hl = "SpecialComment", position = "center" } },
-      { type = "padding", val = 1 },
-      dashboard.button("␣  t", "ᨒ↟ Tree"),
-      dashboard.button("␣ sf", "  Find file"),
-      dashboard.button("␣ sg", "  Find text"),
-      dashboard.button("   e", "  New file", "<cmd>ene<CR>"),
-      dashboard.button("   u", "󱐥  Update plugins", "<cmd>Lazy sync<CR>"),
-      dashboard.button("   t", "  Install language tools", "<cmd>Mason<CR>"),
-      dashboard.button("   q", "󰩈  Quit", "<cmd>qa<CR>"),
-    },
-    position = "center",
-  }
-
-  return theta.config
+  return colorized
 end
 
 return {
-  "goolord/alpha-nvim",
-  event = "VimEnter",
-  enabled = true,
-  init = false,
-  dependencies = { "nvim-tree/nvim-web-devicons" },
-  config = function()
-    if vim.o.filetype == "lazy" then
-      vim.cmd.close()
-      vim.api.nvim_create_autocmd("User", {
-        pattern = "AlphaReady",
-        callback = function()
-          require("lazy").show()
-        end,
-      })
-    end
+  {
+    "goolord/alpha-nvim",
+    event = "VimEnter",
+    enabled = true,
+    init = false,
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    config = function()
+      local alpha = require("alpha")
 
-    require("alpha").setup(configure())
-  end,
+      local dashboard = require("alpha.themes.dashboard")
+
+      -- inspiration: https://www.vecteezy.com/vector-art/27174601-pixel-art-illustration-frog-pixelated-frog-frog-amphibi-animal-icon-pixelated-for-the-pixel-art-game-and-icon-for-website-and-video-game-old-school-retro
+      local color_map = {
+        [[                      EEEEEEEEEEEEEEEE                        EEEEEEEEEEEEEEEE]],
+        [[                  EEEEWWQQGGGGGGGGGGGGEEEE                EEEEWWQQGGGGGGGGGGGGEEEE]],
+        [[                EEWWQQGGGGGGGGGGGGGGGGGGGWQQBBWWWWWWWWBBQQGGGGGGGGGGGGGGGGGGGGGGQQEE]],
+        [[              EEOYYYYYYYYYYQQGGGGGGGGGGGGGGGQQWWWWWWWWQQGGGGGGGGGGGGGGQQYYYYYYYYYYYOEE]],
+        [[            EEBBBBYYYYYYYYYYYYQQGGGGGGGGGGGGQQWWWWWWWWQQGGGGGGGGGGGGQQYYYYYYYYYYYYBBBBEE]],
+        [[            EEBBBBBBBBBBBBYYYYQQGGGGGGGGGGGGGGWWWWWWWWGGGGGGGGGGGGGGQQYYYYBBBBBBBBBBBBEE]],
+        [[            EEYYBBBBBBBBBBYYYYQQGGGGGGGGGGGGGGWWWWWWWWGGGQGGGGGGGGGGQQYYYYBBBBBBBBBBYYEE]],
+        [[            EEYYYYBBBBBBBBYYYYWWGGGGGGGGGGGGGGWWWWWWWWGGGGGGGGGGGGGGQQYYYYBBBBBBBBYYYYEE]],
+        [[            EEYYYYYYYYYYYYYYYYWWGGGGGGGGGGGGGGWWWWWWWWGGGGGGGGGGGGGGQQYYYYYYYYYYYYYYEE]],
+        [[            EEYYYYYYYYYYYYYYWWGGGGGGGGGGGGQQWWWWQQQQWWWWGGGGGGGGGGGGQQYYYYYYYYYYYYYYEE]],
+        [[              BBYYYYYYYYYYWWGGGGGGGGGGGGGGGGGGQQQQQQQQGGGGGQGGGGGGGGGGQQYYYYYYYYYYBB]],
+        [[                BBWWWWWQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQGGGGGGGGGGGGBB]],
+        [[                BBWWQQOOOYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYOOOQQQQBB]],
+        [[                EEQQOOOOOYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYOOOOOQQEE]],
+        [[                EEQQOOOOOYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYOOOOOQQEE]],
+        [[]],
+      }
+
+      local colors = {
+        ["B"] = { fg = "#050401" },
+        ["G"] = { fg = "#8dd234" },
+        ["Q"] = { fg = "#61a63f" },
+        ["W"] = { fg = "#477338" },
+        ["E"] = { fg = "#26421b" },
+        ["Y"] = { fg = "#fcf189" },
+        ["O"] = { fg = "#f8c43b" },
+        ["D"] = { fg = "#e3a727" },
+      }
+
+      local header = {}
+      for _, line in ipairs(color_map) do
+        local header_line = [[]]
+        for i = 1, #line do
+          if line:sub(i, i) ~= " " then
+            header_line = header_line .. "█"
+          else
+            header_line = header_line .. " "
+          end
+        end
+        table.insert(header, header_line)
+      end
+
+      local header_add = [[             R I B B I T V I M             ]]
+      table.insert(header, header_add)
+
+      local hl_add = {}
+      for i = 1, #header_add do
+        table.insert(hl_add, { "NeoBeeTitle", 1, i })
+      end
+
+      dashboard.section.header.val = header
+      local colorized = colorize(header, color_map, colors)
+
+      table.insert(colorized, hl_add)
+
+      dashboard.section.header.opts = {
+        hl = colorized,
+        position = "center",
+      }
+
+      dashboard.section.buttons.val = {
+        dashboard.button("␣  t", "ᨒ↟  Tree"),
+        dashboard.button("␣ sf", "   Find file"),
+        dashboard.button("␣ s/", "   Grep"),
+        dashboard.button("   r", "   Recent files", "<cmd>Telescope oldfiles<cr>"),
+        dashboard.button("   s", "   Restore Session", [[<cmd> lua require("persistence").load() <cr>]]),
+        dashboard.button("   l", "󰒲   Eazy", "<cmd> Eazy <cr>"),
+        dashboard.button("   q", "   Quit", "<cmd> qa <cr>"),
+      }
+
+      for _, a in ipairs(dashboard.section.buttons.val) do
+        a.opts.width = 49
+        a.opts.cursor = -2
+      end
+
+      alpha.setup(dashboard.config)
+    end,
+  },
 }

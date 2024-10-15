@@ -8,11 +8,13 @@ return {
     config = function()
       require("ponokai-pro").setup({
         filter = "pro",
+        transparent_background = true,
         background_clear = {
           "neo-tree",
         },
         plugins = {
           neo_tree = {},
+          lualine = {},
         },
       })
     end,
